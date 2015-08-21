@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>Galactic DeathMatch</title> 
+		<link href="/css/reset.css" rel="stylesheet" type="text/css" />
+		<link href="/css/style.css" rel="stylesheet" type="text/css" />
+		<script src="/js/jquery-2.1.4.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/js/game.js"></script>
+	</head>
+	<body>
+		<canvas id='screen'></canvas>
+		<div id='panel'>
+			<span style='font-size: 30px; color: red'>HP: </span>
+			<span id='hp' style='font-size: 30px; color: red'></span><br/>
+		</div>
+		<div id='lose'>
+			<img src='/images/lose.jpg'/>
+			<input style="height: 30px; width: 150px;" type='button' onclick='location.reload()' value='NEW GAME' />
+		</div>
+	</body>
+</html>

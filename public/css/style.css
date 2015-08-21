@@ -1,0 +1,19 @@
+#panel{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+
+#lose {
+	text-align: center;
+	width: 259px;
+	height: 220px;
+	position: absolute;
+	top: 40%;
+	left: 40%;
+	display: none;
+}
+
+#screen{
+	background-color: black;
+}
