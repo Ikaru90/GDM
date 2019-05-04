@@ -1,0 +1,30 @@
+{
+  "name": "gdm",
+  "version": "1.0.0",
+  "description": "https://galacticdeathmatchbyikaru90.herokuapp.com/",
+  "main": "index.js",
+  "scripts": {
+    "server": "gulp server:build & gulp server:start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ikaru90/GDM.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ikaru90/GDM/issues"
+  },
+  "homepage": "https://github.com/Ikaru90/GDM#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "gulp": "^4.0.1",
+    "gulp-babel": "^8.0.0",
+    "gulp-nodemon": "^2.4.2"
+  }
+}
