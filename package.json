@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/Ikaru90/GDM#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.4",
