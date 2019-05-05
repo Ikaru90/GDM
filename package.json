@@ -4,7 +4,7 @@
   "description": "https://galacticdeathmatchbyikaru90.herokuapp.com/",
   "main": "index.js",
   "scripts": {
-    "server": "gulp server:build & gulp server:start"
+    "start": "gulp copy:html & gulp copy:js & gulp server:build & gulp server:start"
   },
   "repository": {
     "type": "git",
