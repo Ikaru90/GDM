@@ -1,0 +1,49 @@
+{
+  "name": "gdm",
+  "version": "0.1.0",
+  "description": "https://galacticdeathmatchbyikaru90.herokuapp.com/",
+  "main": "index.js",
+  "scripts": {
+    "webpack": "webpack --config ./webpack.config.js --mode development",
+    "webpack:watch": "webpack --config ./webpack.config.js --mode development --watch",
+    "client:build": "npm run webpack",
+    "client:start": "npm run webpack:watch",
+    "server:build": "gulp copy:html & gulp server:build",
+    "server:start": "npm run server:build & gulp server:start",
+    "build": "npm run client:build & npm run server:build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ikaru90/GDM.git"
+  },
+  "keywords": [
+    "node",
+    "nodemon",
+    "express",
+    "socket.io",
+    "gulp",
+    "wepback",
+    "phaser"
+  ],
+  "author": "Ikaru90",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ikaru90/GDM/issues"
+  },
+  "homepage": "https://github.com/Ikaru90/GDM#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "phaser": "^3.16.2",
+    "socket.io": "^2.2.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "babel-loader": "^8.0.5",
+    "gulp": "^4.0.1",
+    "gulp-babel": "^8.0.0",
+    "gulp-nodemon": "^2.4.2",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.2"
+  }
+}
