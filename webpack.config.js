@@ -2,12 +2,11 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        'bundle.js': './src/client/js/app.js',
-        'styles.css': './src/client/styles/form.css'
+        bundle: './src/client/js/app.js',
     },
     output: {
         path: path.resolve(__dirname, 'build/public'),
-        filename: '[name]'
+        filename: '[name].js'
     },
     module: {
         rules: [
@@ -23,12 +22,10 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: {
-                    loader: 'css-loader',
-                    options: {
-                        modules: true
-                    }
-                }
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
             }
         ]
     }
