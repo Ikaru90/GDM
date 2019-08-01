@@ -11,15 +11,20 @@ form {
     padding: 3px;
     position: fixed;
     bottom: 0px;
-    width: 100%;
-    display: block;
+    width: 300px;
+    display: inline-block;
+    border-radius: 5px;
+    background-color: #81818179;
+    opacity: 0.5;
 }
 
 form input {
-    padding: 10px;
+    padding: 5px;
     border: 0;
-    margin-right: 5px;
     display: inline-block;
+    width: 75%;
+    height: 26px;
+    position: relative;
 }
 
 form button {
@@ -31,6 +36,21 @@ form button {
     display: inline-block;
 }
 
-#messages { list-style-type: none; margin: 0; padding: 0;}
-#messages li { padding: 5px 10px; }
-#messages li:nth-child(odd) { background: #eee; }
+#chat-input-button {
+    text-align: right;
+}
+
+#messages {
+    padding: 0px;
+    border: 1px solid #d6e9c7;
+    border-radius: 2px;
+    color: #444444;
+    bottom: 0;
+    list-style-type: none;
+    width: max-content;
+}
+#messages li {
+    padding: 5px 10px;
+    margin: 5px;
+}
+#messages li:nth-child(odd) { background: #eee;}

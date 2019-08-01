@@ -32,7 +32,12 @@ io.on('connection', (socket) => {
 	socket.on('chat message', (message) => {
 		console.log('message: ' + message);
 		io.emit('chat message', message);
-	})
+	});
+
+	socket.on('typing', (message) => {
+		io.emit('typing', message);
+		console.log('Нервно печатает');
+	});
 });
 
 console.log('Server Started at port:', port);
