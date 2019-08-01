@@ -13,7 +13,7 @@ gulp.task('copy:js', () => {
 });
 
 gulp.task('server:build', () =>
-  gulp.src('src/server/app.js')
+  gulp.src('src/server/server.js')
     .pipe(babel({
       presets: ['@babel/env']
     }))
@@ -21,7 +21,7 @@ gulp.task('server:build', () =>
 );
 
 gulp.task('server:start', (done) => nodemon({
-    script: 'build/app.js',
+    script: 'build/server.js',
     watch: 'src/server',
     tasks: ['server:build'],
     done: done

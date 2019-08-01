@@ -2,7 +2,7 @@
   "name": "gdm",
   "version": "0.1.0",
   "description": "https://galacticdeathmatchbyikaru90.herokuapp.com/",
-  "main": "index.js",
+  "main": "bundle.js",
   "scripts": {
     "webpack": "webpack --config ./webpack.config.js --mode development",
     "webpack:watch": "webpack --config ./webpack.config.js --mode development --watch",
@@ -23,7 +23,7 @@
     "socket.io",
     "gulp",
     "wepback",
-    "phaser"
+    "pixi"
   ],
   "author": "Ikaru90",
   "license": "ISC",
@@ -34,6 +34,7 @@
   "dependencies": {
     "express": "^4.16.4",
     "lodash.debounce": "^4.0.8",
+    "pixi.js": "^5.1.0",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
