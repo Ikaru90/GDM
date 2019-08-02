@@ -1,7 +1,16 @@
 const path = require('path');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: './src/client/js/app.js',
+    plugins: [
+        new CleanWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            title: 'GDM',
+            template: './src/client/index.html'
+        })
+    ],
     output: {
         path: path.resolve(__dirname, 'build/public'),
         filename: 'bundle.js'
@@ -24,6 +33,10 @@ module.exports = {
                     'style-loader',
                     'css-loader'
                 ]
+            },
+            {
+                test: /\.png$/,
+                use: ['file-loader']
             }
         ]
     }

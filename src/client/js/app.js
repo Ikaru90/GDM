@@ -1,17 +1,17 @@
 import {debounceFunc} from './Utils';
 import '../styles/form.css';
 import * as PIXI from 'pixi.js';
+import tileSet from '../images/tileset.png';
+import playerImage from '../images/player.png';
 
 const socket = io();
 let nickName = "Кот Борис";
 
-
-
-
 window.onload = () => {
   let Application = PIXI.Application,
-    loader = PIXI.loader,
-    Sprite = PIXI.Sprite;
+    Sprite = PIXI.Sprite,
+    TextureCache = PIXI.utils.TextureCache,
+    Rectangle = PIXI.Rectangle;
 
     // Create a Pixi Application.
   const app = new PIXI.Application({
@@ -21,7 +21,7 @@ window.onload = () => {
     transparent: false,
     resolution: 1
   });
-  const {renderer} = app;
+  const {renderer, loader} = app;
 
   renderer.backgroundColor= 0xdddddd;
   renderer.autoDensity = true;
@@ -100,42 +100,155 @@ window.onload = () => {
 
   document.body.appendChild(app.view);
 
-//   /**
-//    * Должен следить за сообщениями в блоке.
-//    */
-//   const maintainMessages = () => {
-//     const messages = document.getElementById('messages');
-// // нихера не работает надо почитать как удалять ноды
-//     if (messages.childElementCount > 11) {
-//       messages.childNodes = messages.childNodes.slice(messages.childNodes.length - 11);
-//     }
-//   };
+  /**
+   * Должен следить за сообщениями в блоке.
+   */
+  const maintainMessages = () => {
+    const messages = document.getElementById('messages');
+// нихера не работает надо почитать как удалять ноды
+    if (messages.childElementCount > 11) {
+      messages.childNodes = messages.childNodes.slice(messages.childNodes.length - 11);
+    }
+  };
+
+  /**
+   * Обработчик загрузки изображений.
+   *
+   * @prop {any} loader Загрузчик.
+   * @prop {any} resource Ресурс.
+   */
+  const handleLoadProgress = (loader, resource) => {
+    console.log('loading' + resource.url);
+    console.log('progress: ' + loader.progress + " %");
+  }
+
+  /**
+   * Обрабатывает события нажатия и отпуска клавиши.
+   *
+   * @param {*} value 
+   */
+  const handleKeyPressing = (value) => {
+    let key = {
+      value: value,
+      isDown: false,
+      isUp: true,
+      press: undefined,
+      release: undefined,
+    };
+
+    /**
+     * Обработчик нажатия клавиши.
+     *
+     * @param {*} event Событие обрабатываемое.
+     */
+    const handleKeyDown = (event) => {
+      if (event.key === key.value) {
+        if (key.isUp && key.press) key.press();
+        
+        key.isDown = true;
+        key.isUp = false;
+        event.preventDefault();
+      }
+    }
+
+    /**
+     * Обработчик отжатия.
+     *
+     * @param {*} event 
+     */
+    const handleKeyUp = (event) => {
+      if (event.key === key.value) {
+        if (key.isDown && key.release) key.release();
+        
+        key.isDown = false;
+        key.isUp = true;
+        event.preventDefault();
+      }
+    };
+
+    key.upHandler = handleKeyUp;
+    key.downHandler = handleKeyDown;
+    key.unsubscribe = handleUnsubscribe;
+
+    /**
+     * Отписываемся от мониторинга событий.
+     */
+    const handleUnsubscribe = () => {
+      window.removeEventListener('keydown', key.downHandler);
+      window.removeEventListener('keyup', key.upHandler);
+    }
+
+    window.addEventListener(
+      'keydown', key.downHandler, false
+    );
+
+    window.addEventListener(
+      'keyup', key.upHandler, false
+    );
+    
+    return key;
+  }
+
+  loader
+    .add('playerImage', playerImage)
+    .add('tileSet', tileSet)
+    .on('progress', handleLoadProgress)
+    .load(setup);
+  let player;
+  let bomb;
+
+  function setup() {
+    let texture = TextureCache[tileSet];
+    let rectangle = new Rectangle(160, 160, 32, 32);
+    player = new Sprite(loader.resources.playerImage.texture);
+
+    texture.frame = rectangle;
+
+    bomb = new Sprite(texture);
+    bomb.position.set(10, 10);
+    bomb.anchor.set(0.5, 0.5);
+
+    player.position.set(100, 96);
+    player.vx = 0;
+    player.vy = 0;
+
+    player.anchor.set(0.5, 0.5);
+
+    app.stage.addChild(player);
+    app.stage.addChild(bomb);
+    console.log('All files are loaded.')
+    app.renderer.render(app.stage);
+
+    app.ticker.add(delta => gameLoop(delta));
+  }
+
+  /**
+   * Движение вперед.
+   */
+  let moveForward = handleKeyPressing('ArrowUp');
+  moveForward.press = () => {
+    player.vx = 1;
+    player.x += player.vx;
+  }
+  moveForward.release = () => {
+    player.vx = 0;
+  }
+
+  /**
+   * Движение назад.
+   */
+  let moveBack = handleKeyPressing('ArrowDown');
+  moveBack.press = () => {
+    player.vx = -1;
+    player.x += player.vx;
+  }
+  moveBack.release = () => {
+    player.vx = 0;
+  }
+
+  // Собственно здесь происходит все действо игры.
+  function gameLoop(delta) {
+    player.x += player.vx;
+    player.y += player.vy;
+  }
 }
-
-/**
- * Обработчик загрузки изображений.
- *
- * @prop {any} loader Загрузчик.
- * @prop {any} resource Ресурс.
- */
-const handleLoadProgress = (loader, resource) => {
-  console.log('loading' + resource.url);
-  console.log('progress: ' + loader.progress + " %");
-}
-
-PIXI.loader
-  .add('playerImage', '../images/player.png')
-  .on('progress', handleLoadProgress)
-  .load(setup);
-
-function setup() {
-  // Не наю зачем, но оно зачем-то понадобится
-  let player = new Sprite(loader.resources.playerImage.texture);
-
-  player.position.set(100, 96);
-  player.anchor.set(0.5, 0.5);
-
-  app.stage.addChild(player);
-  console.log('All files are loaded.')
-}
-
