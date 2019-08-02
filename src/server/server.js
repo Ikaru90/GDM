@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000;
 
 app.set('port', port);
 
+app.use('/pixi', express.static(`${__dirname}/node_modules/pixi.js/dist/`));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
@@ -40,4 +41,4 @@ io.on('connection', (socket) => {
 	});
 });
 
-console.log('Server Started at port:', port);
+console.log('Server started at port:', port);
