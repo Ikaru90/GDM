@@ -1,9 +1,13 @@
-import {debounceFunc} from './Utils';
+import {debounceFunc, handleKeyPressing} from './Utils';
 import '../styles/form.css';
 import * as PIXI from 'pixi.js';
 import tileSet from '../images/tileset.png';
 import playerImage from '../images/player.png';
+import {SPEED_X_Y} from './Consts';
+import background from '../images/background.jpg';
 
+// Пока определяет направление вращения\движения.
+let direction;
 const socket = io();
 let nickName = "Кот Борис";
 
@@ -23,7 +27,7 @@ window.onload = () => {
   });
   const {renderer, loader} = app;
 
-  renderer.backgroundColor= 0xdddddd;
+  // renderer.backgroundColor= 0xdddddd;
   renderer.autoDensity = true;
   renderer.view.style.display = "block";
   renderer.view.style.position = "absolute";
@@ -122,101 +126,42 @@ window.onload = () => {
     console.log('progress: ' + loader.progress + " %");
   }
 
-  /**
-   * Обрабатывает события нажатия и отпуска клавиши.
-   *
-   * @param {*} value 
-   */
-  const handleKeyPressing = (value) => {
-    let key = {
-      value: value,
-      isDown: false,
-      isUp: true,
-      press: undefined,
-      release: undefined,
-    };
-
-    /**
-     * Обработчик нажатия клавиши.
-     *
-     * @param {*} event Событие обрабатываемое.
-     */
-    const handleKeyDown = (event) => {
-      if (event.key === key.value) {
-        if (key.isUp && key.press) key.press();
-        
-        key.isDown = true;
-        key.isUp = false;
-        event.preventDefault();
-      }
-    }
-
-    /**
-     * Обработчик отжатия.
-     *
-     * @param {*} event 
-     */
-    const handleKeyUp = (event) => {
-      if (event.key === key.value) {
-        if (key.isDown && key.release) key.release();
-        
-        key.isDown = false;
-        key.isUp = true;
-        event.preventDefault();
-      }
-    };
-
-    key.upHandler = handleKeyUp;
-    key.downHandler = handleKeyDown;
-    key.unsubscribe = handleUnsubscribe;
-
-    /**
-     * Отписываемся от мониторинга событий.
-     */
-    const handleUnsubscribe = () => {
-      window.removeEventListener('keydown', key.downHandler);
-      window.removeEventListener('keyup', key.upHandler);
-    }
-
-    window.addEventListener(
-      'keydown', key.downHandler, false
-    );
-
-    window.addEventListener(
-      'keyup', key.upHandler, false
-    );
-    
-    return key;
-  }
-
   loader
     .add('playerImage', playerImage)
-    .add('tileSet', tileSet)
+    // .add('tileSet', tileSet)
+    .add('background', background)
     .on('progress', handleLoadProgress)
     .load(setup);
   let player;
-  let bomb;
+  // let bomb;
 
   function setup() {
-    let texture = TextureCache[tileSet];
-    let rectangle = new Rectangle(160, 160, 32, 32);
+  const background = new Sprite(loader.resources.background.texture);
+  background.width = app.screen.width*2;
+  background.height = app.screen.height*4;
+  app.stage.addChild(background);
+    // let texture = TextureCache[tileSet];
+    // let rectangle = new Rectangle(160, 160, 32, 32);
+    
     player = new Sprite(loader.resources.playerImage.texture);
 
-    texture.frame = rectangle;
+    // player.blendMode = PIXI.BLEND_MODES.ADD;
 
-    bomb = new Sprite(texture);
-    bomb.position.set(10, 10);
-    bomb.anchor.set(0.5, 0.5);
+    // texture.frame = rectangle;
+
+    // bomb = new Sprite(texture);
+    // bomb.position.set(10, 10);
+    // bomb.anchor.set(0.5, 0.5);
 
     player.position.set(100, 96);
     player.vx = 0;
     player.vy = 0;
+    player.vd = 0;
 
     player.anchor.set(0.5, 0.5);
 
     app.stage.addChild(player);
-    app.stage.addChild(bomb);
-    console.log('All files are loaded.')
+    // app.stage.addChild(bomb);
     app.renderer.render(app.stage);
 
     app.ticker.add(delta => gameLoop(delta));
@@ -227,11 +172,12 @@ window.onload = () => {
    */
   let moveForward = handleKeyPressing('ArrowUp');
   moveForward.press = () => {
-    player.vx = 1;
-    player.x += player.vx;
+    player.vx = direction * SPEED_X_Y * Math.cos(player.rotation);
+    player.vy = direction * SPEED_X_Y *Math.sin(player.rotation);
   }
   moveForward.release = () => {
     player.vx = 0;
+    player.vy = 0;
   }
 
   /**
@@ -239,16 +185,47 @@ window.onload = () => {
    */
   let moveBack = handleKeyPressing('ArrowDown');
   moveBack.press = () => {
-    player.vx = -1;
-    player.x += player.vx;
+    player.vx = direction * SPEED_X_Y * Math.cos(player.rotation);
+    player.vy = direction * SPEED_X_Y *Math.sin(player.rotation);
   }
   moveBack.release = () => {
     player.vx = 0;
   }
 
+  /**
+   * Поворот вправо.
+   */
+  let moveRight = handleKeyPressing('ArrowRight');
+  moveRight.press = () => {
+    player.vd = 0.2;
+  }
+  moveRight.release = () => {
+    player.vd = 0;
+  }
+
+  /**
+   * Поворот влево.
+   */
+  let moveLeft = handleKeyPressing('ArrowLeft');
+  moveLeft.press = () => {
+    player.vd = -0.2;
+  }
+  moveLeft.release = () => {
+    player.vd = 0;
+  }
+
   // Собственно здесь происходит все действо игры.
   function gameLoop(delta) {
+    direction = player.vd >= 0 ? 1 : - 1;
+    if(moveForward.isDown && moveRight.isDown) {
+      player.vx = direction * SPEED_X_Y * Math.cos(player.rotation);
+      player.vy = direction * SPEED_X_Y *Math.sin(player.rotation);
+    } else if (moveForward.isDown && moveLeft.isDown) {
+      player.vx = SPEED_X_Y * Math.cos(player.rotation);
+      player.vy = SPEED_X_Y *Math.sin(player.rotation);
+    }
     player.x += player.vx;
     player.y += player.vy;
+    player.rotation += player.vd;
   }
 }
