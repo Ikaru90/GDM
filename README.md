@@ -8,7 +8,3 @@ npm install
 
 node app.js
 localhost:3000
-
-# herokuappp
-
-galacticdeathmatchbyikaru90.herokuapp.com
