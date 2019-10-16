@@ -17,7 +17,3 @@ npm run server:start
 ## Build Only
 
 npm run build
-
-## Old version here
-
-galacticdeathmatchbyikaru90.herokuapp.com
